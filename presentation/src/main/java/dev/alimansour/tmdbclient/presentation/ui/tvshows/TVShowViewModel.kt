@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import dev.alimansour.tmdbclient.domain.usecase.tvshow.GetTVShowsUseCase
 import dev.alimansour.tmdbclient.domain.usecase.tvshow.UpdateTVShowsUseCase
+import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -21,15 +22,31 @@ class TVShowViewModel(
      * Get list of popular TV shows
      */
     fun getTVShows() = liveData {
-        val tvShowList = getTVShowsUseCase.execute()
-        emit(tvShowList)
+        runCatching {
+            emit(ResultWrapper.loading(null))
+            getTVShowsUseCase.execute()?.let {
+                emit(ResultWrapper.success(it))
+            } ?: run {
+                emit(ResultWrapper.error(null, "No data available!"))
+            }
+        }.onFailure {
+            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
+        }
     }
 
     /**
      * Update the list of popular TV shows
      */
     fun updateTVShows() = liveData {
-        val tvShowList = updateTVShowsUseCase.execute()
-        emit(tvShowList)
+        runCatching {
+            emit(ResultWrapper.loading(null))
+            updateTVShowsUseCase.execute()?.let {
+                emit(ResultWrapper.success(it))
+            } ?: run {
+                emit(ResultWrapper.error(null, "No data available!"))
+            }
+        }.onFailure {
+            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
+        }
     }
 }

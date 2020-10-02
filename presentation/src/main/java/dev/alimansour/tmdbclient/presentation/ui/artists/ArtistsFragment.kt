@@ -2,7 +2,6 @@ package dev.alimansour.tmdbclient.presentation.ui.artists
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dev.alimansour.tmdbclient.databinding.FragmentArtistsBinding
 import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 import dev.alimansour.tmdbclient.presentation.ui.Injector
-import dev.alimansour.tmdbclient.presentation.ui.movies.MoviesFragment
 import dev.alimansour.tmdbclient.presentation.utils.stopRefreshing
 import javax.inject.Inject
 
@@ -57,9 +55,6 @@ class ArtistsFragment : Fragment() {
                 updateArtists()
             }
             initRecyclerView()
-
-            artistViewModel.getArtists().observe(viewLifecycleOwner, {
-            })
         }.onFailure { it.printStackTrace() }
         return binding.root
     }
@@ -119,7 +114,6 @@ class ArtistsFragment : Fragment() {
         runCatching {
             binding.apply {
                 artistViewModel.updateArtists().observe(viewLifecycleOwner, { result ->
-                    Log.d(MoviesFragment::class.simpleName, "Update movies!")
                     when (result.status) {
                         ResultWrapper.Status.LOADING -> {
                             swipeRefreshLayout.post {

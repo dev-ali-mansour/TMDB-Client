@@ -2,7 +2,6 @@ package dev.alimansour.tmdbclient.presentation.ui.movies
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,7 +114,6 @@ class MoviesFragment : Fragment() {
         runCatching {
             binding.apply {
                 movieViewModel.updateMovies().observe(viewLifecycleOwner, { result ->
-                    Log.d(MoviesFragment::class.simpleName, "Update movies!")
                     when (result.status) {
                         Status.LOADING -> {
                             swipeRefreshLayout.post {
