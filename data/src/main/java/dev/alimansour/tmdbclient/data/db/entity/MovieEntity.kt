@@ -23,5 +23,7 @@ data class MovieEntity(
     @SerializedName("release_date")
     val releaseDate: String,
     @SerializedName("title")
-    val title: String
+    val title: String,
+    @SerializedName("popularity")
+    val popularity: Double
 )

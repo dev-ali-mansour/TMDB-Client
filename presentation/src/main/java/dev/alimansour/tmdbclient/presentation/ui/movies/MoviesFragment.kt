@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dev.alimansour.tmdbclient.databinding.FragmentMoviesBinding
 import dev.alimansour.tmdbclient.domain.util.ResultWrapper.Status
 import dev.alimansour.tmdbclient.presentation.ui.Injector
-import dev.alimansour.tmdbclient.presentation.utils.stopRefreshing
+import dev.alimansour.tmdbclient.presentation.util.startRefreshing
+import dev.alimansour.tmdbclient.presentation.util.stopRefreshing
 import javax.inject.Inject
 
 /**
@@ -50,10 +51,7 @@ class MoviesFragment : Fragment() {
             binding = FragmentMoviesBinding.inflate(layoutInflater, container, false)
             movieViewModel = ViewModelProvider(this, factory).get(MovieViewModel::class.java)
 
-            binding.swipeRefreshLayout.setOnRefreshListener {
-                binding.swipeRefreshLayout.stopRefreshing()
-                updateMovies()
-            }
+            binding.swipeRefreshLayout.setOnRefreshListener { updateMovies() }
             initRecyclerView()
         }.onFailure { it.printStackTrace() }
         return binding.root
@@ -83,9 +81,7 @@ class MoviesFragment : Fragment() {
                 movieViewModel.getMovies().observe(viewLifecycleOwner, { result ->
                     when (result.status) {
                         Status.LOADING -> {
-                            swipeRefreshLayout.post {
-                                swipeRefreshLayout.isRefreshing = true
-                            }
+                            swipeRefreshLayout.startRefreshing()
                         }
                         Status.ERROR -> {
                             swipeRefreshLayout.stopRefreshing()
@@ -94,8 +90,14 @@ class MoviesFragment : Fragment() {
                         }
                         Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
-                            result.data?.let { posts ->
-                                adapter.setDataSource(posts)
+                            result.data?.let { list ->
+                                adapter.setDataSource(list.sortedBy { it.popularity })
+                            } ?: run {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No movies data available!",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     }
@@ -116,9 +118,7 @@ class MoviesFragment : Fragment() {
                 movieViewModel.updateMovies().observe(viewLifecycleOwner, { result ->
                     when (result.status) {
                         Status.LOADING -> {
-                            swipeRefreshLayout.post {
-                                swipeRefreshLayout.isRefreshing = true
-                            }
+                            swipeRefreshLayout.startRefreshing()
                         }
                         Status.ERROR -> {
                             swipeRefreshLayout.stopRefreshing()
@@ -127,15 +127,15 @@ class MoviesFragment : Fragment() {
                         }
                         Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
-                            result.data?.let { posts ->
-                                adapter.setDataSource(posts)
+                            result.data?.let { list ->
+                                adapter.setDataSource(list.sortedBy { it.popularity })
                             }
                         }
                     }
                 })
             }
         }.onFailure {
-            binding.swipeRefreshLayout.stopRefreshing()
+            binding.swipeRefreshLayout.isRefreshing = false
             it.printStackTrace()
         }
     }

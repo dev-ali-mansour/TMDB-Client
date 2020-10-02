@@ -91,7 +91,6 @@ class ArtistsRepositoryImpl(
             artistList = getArtistsFromDB()
             artistCacheDataSource.saveArtistsToCache(artistList)
         }
-
         return artistList
     }
 }

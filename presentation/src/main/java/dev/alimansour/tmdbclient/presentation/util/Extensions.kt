@@ -1,4 +1,4 @@
-package dev.alimansour.tmdbclient.presentation.utils
+package dev.alimansour.tmdbclient.presentation.util
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
@@ -11,10 +11,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
  */
 
 /**
- * Stop refresh for SwipeToRefreshLayout
+ * Start refreshing for SwipeToRefreshLayout
+ */
+fun SwipeRefreshLayout.startRefreshing() {
+    post { isRefreshing = true }
+}
+
+/**
+ * Stop refreshing for SwipeToRefreshLayout
  */
 fun SwipeRefreshLayout.stopRefreshing() {
-    if (this.isRefreshing) {
-        this.isRefreshing = false
-    }
+    post { if (isRefreshing) isRefreshing = false }
 }

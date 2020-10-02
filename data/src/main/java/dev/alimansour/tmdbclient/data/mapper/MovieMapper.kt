@@ -13,10 +13,24 @@ import javax.inject.Inject
  */
 class MovieMapper @Inject constructor() : Mapper<MovieEntity, Movie> {
     override fun mapFromEntity(type: MovieEntity): Movie {
-        return Movie(type.id, type.overview, type.posterPath, type.releaseDate, type.title)
+        return Movie(
+            type.id,
+            type.overview,
+            type.posterPath,
+            type.releaseDate,
+            type.title,
+            type.popularity
+        )
     }
 
     override fun mapToEntity(type: Movie): MovieEntity {
-        return MovieEntity(type.id, type.overview, type.posterPath, type.releaseDate, type.title)
+        return MovieEntity(
+            type.id,
+            type.overview,
+            type.posterPath,
+            type.releaseDate,
+            type.title,
+            type.popularity
+        )
     }
 }

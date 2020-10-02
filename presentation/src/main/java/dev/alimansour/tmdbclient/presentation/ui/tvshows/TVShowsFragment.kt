@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dev.alimansour.tmdbclient.databinding.FragmentTvShowsBinding
 import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 import dev.alimansour.tmdbclient.presentation.ui.Injector
-import dev.alimansour.tmdbclient.presentation.utils.stopRefreshing
+import dev.alimansour.tmdbclient.presentation.util.startRefreshing
+import dev.alimansour.tmdbclient.presentation.util.stopRefreshing
 import javax.inject.Inject
 
 /**
@@ -51,7 +52,7 @@ class TVShowsFragment : Fragment() {
             tvShowViewModel = ViewModelProvider(this, factory).get(TVShowViewModel::class.java)
 
             binding.swipeRefreshLayout.setOnRefreshListener {
-                binding.swipeRefreshLayout.stopRefreshing()
+                binding.swipeRefreshLayout.isRefreshing = false
                 updateTVShows()
             }
             initRecyclerView()
@@ -83,9 +84,7 @@ class TVShowsFragment : Fragment() {
                 tvShowViewModel.getTVShows().observe(viewLifecycleOwner, { result ->
                     when (result.status) {
                         ResultWrapper.Status.LOADING -> {
-                            swipeRefreshLayout.post {
-                                swipeRefreshLayout.isRefreshing = true
-                            }
+                            swipeRefreshLayout.startRefreshing()
                         }
                         ResultWrapper.Status.ERROR -> {
                             swipeRefreshLayout.stopRefreshing()
@@ -94,8 +93,14 @@ class TVShowsFragment : Fragment() {
                         }
                         ResultWrapper.Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
-                            result.data?.let { posts ->
-                                adapter.setDataSource(posts)
+                            result.data?.let { list ->
+                                adapter.setDataSource(list.sortedBy { it.popularity })
+                            } ?: run {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No TV shows data available!",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     }
@@ -116,9 +121,7 @@ class TVShowsFragment : Fragment() {
                 tvShowViewModel.updateTVShows().observe(viewLifecycleOwner, { result ->
                     when (result.status) {
                         ResultWrapper.Status.LOADING -> {
-                            swipeRefreshLayout.post {
-                                swipeRefreshLayout.isRefreshing = true
-                            }
+                            swipeRefreshLayout.startRefreshing()
                         }
                         ResultWrapper.Status.ERROR -> {
                             swipeRefreshLayout.stopRefreshing()
@@ -127,15 +130,15 @@ class TVShowsFragment : Fragment() {
                         }
                         ResultWrapper.Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
-                            result.data?.let { posts ->
-                                adapter.setDataSource(posts)
+                            result.data?.let { list ->
+                                adapter.setDataSource(list.sortedBy { it.popularity })
                             }
                         }
                     }
                 })
             }
         }.onFailure {
-            binding.swipeRefreshLayout.stopRefreshing()
+            binding.swipeRefreshLayout.isRefreshing = false
             it.printStackTrace()
         }
     }

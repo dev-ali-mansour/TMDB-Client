@@ -24,11 +24,7 @@ class MovieViewModel(
     fun getMovies() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            getMoviesUseCase.execute()?.let {
-                emit(ResultWrapper.success(it))
-            } ?: run {
-                emit(ResultWrapper.error(null, "No data available!"))
-            }
+            emit(ResultWrapper.success(getMoviesUseCase.execute()))
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
@@ -40,11 +36,7 @@ class MovieViewModel(
     fun updateMovies() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            updateMoviesUseCase.execute()?.let {
-                emit(ResultWrapper.success(it))
-            } ?: run {
-                emit(ResultWrapper.error(null, "No data available!"))
-            }
+            emit(ResultWrapper.success(updateMoviesUseCase.execute()))
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }

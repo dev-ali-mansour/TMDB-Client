@@ -13,10 +13,24 @@ import javax.inject.Inject
  */
 class TVShowMapper @Inject constructor() : Mapper<TVShowEntity, TvShow> {
     override fun mapFromEntity(type: TVShowEntity): TvShow {
-        return TvShow(type.firstAirDate, type.id, type.name, type.overview, type.posterPath)
+        return TvShow(
+            type.firstAirDate,
+            type.id,
+            type.name,
+            type.overview,
+            type.posterPath,
+            type.popularity
+        )
     }
 
     override fun mapToEntity(type: TvShow): TVShowEntity {
-        return TVShowEntity(type.firstAirDate, type.id, type.name, type.overview, type.posterPath)
+        return TVShowEntity(
+            type.firstAirDate,
+            type.id,
+            type.name,
+            type.overview,
+            type.posterPath,
+            type.popularity
+        )
     }
 }

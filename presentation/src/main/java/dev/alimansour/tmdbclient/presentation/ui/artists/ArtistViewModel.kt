@@ -24,13 +24,7 @@ class ArtistViewModel(
     fun getArtists() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            getArtistsUseCase.execute()?.let {
-                emit(ResultWrapper.success(it))
-            } ?: run {
-                emit(ResultWrapper.error(null, "No data available!"))
-            }
-        }.onFailure {
-            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
+            emit(ResultWrapper.success(getArtistsUseCase.execute()))
         }
     }
 
@@ -40,11 +34,7 @@ class ArtistViewModel(
     fun updateArtists() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            updateArtistsUseCase.execute()?.let {
-                emit(ResultWrapper.success(it))
-            } ?: run {
-                emit(ResultWrapper.error(null, "No data available!"))
-            }
+            emit(ResultWrapper.success(updateArtistsUseCase.execute()))
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }

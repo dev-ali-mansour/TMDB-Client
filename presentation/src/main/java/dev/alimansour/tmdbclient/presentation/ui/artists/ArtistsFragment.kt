@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dev.alimansour.tmdbclient.databinding.FragmentArtistsBinding
 import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 import dev.alimansour.tmdbclient.presentation.ui.Injector
-import dev.alimansour.tmdbclient.presentation.utils.stopRefreshing
+import dev.alimansour.tmdbclient.presentation.util.startRefreshing
+import dev.alimansour.tmdbclient.presentation.util.stopRefreshing
 import javax.inject.Inject
 
 /**
@@ -51,7 +52,7 @@ class ArtistsFragment : Fragment() {
             artistViewModel = ViewModelProvider(this, factory).get(ArtistViewModel::class.java)
 
             binding.swipeRefreshLayout.setOnRefreshListener {
-                binding.swipeRefreshLayout.stopRefreshing()
+                binding.swipeRefreshLayout.isRefreshing = false
                 updateArtists()
             }
             initRecyclerView()
@@ -83,9 +84,7 @@ class ArtistsFragment : Fragment() {
                 artistViewModel.getArtists().observe(viewLifecycleOwner, { result ->
                     when (result.status) {
                         ResultWrapper.Status.LOADING -> {
-                            swipeRefreshLayout.post {
-                                swipeRefreshLayout.isRefreshing = true
-                            }
+                            swipeRefreshLayout.startRefreshing()
                         }
                         ResultWrapper.Status.ERROR -> {
                             swipeRefreshLayout.stopRefreshing()
@@ -94,15 +93,21 @@ class ArtistsFragment : Fragment() {
                         }
                         ResultWrapper.Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
-                            result.data?.let { posts ->
-                                adapter.setDataSource(posts)
+                            result.data?.let { list ->
+                                adapter.setDataSource(list.sortedBy { it.popularity })
+                            } ?: run {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No artists data available!",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     }
                 })
             }
         }.onFailure {
-            binding.swipeRefreshLayout.stopRefreshing()
+            binding.swipeRefreshLayout.isRefreshing = false
             it.printStackTrace()
         }
     }
@@ -116,9 +121,7 @@ class ArtistsFragment : Fragment() {
                 artistViewModel.updateArtists().observe(viewLifecycleOwner, { result ->
                     when (result.status) {
                         ResultWrapper.Status.LOADING -> {
-                            swipeRefreshLayout.post {
-                                swipeRefreshLayout.isRefreshing = true
-                            }
+                            swipeRefreshLayout.startRefreshing()
                         }
                         ResultWrapper.Status.ERROR -> {
                             swipeRefreshLayout.stopRefreshing()
@@ -127,8 +130,8 @@ class ArtistsFragment : Fragment() {
                         }
                         ResultWrapper.Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
-                            result.data?.let { posts ->
-                                adapter.setDataSource(posts)
+                            result.data?.let { list ->
+                                adapter.setDataSource(list.sortedBy { it.popularity })
                             }
                         }
                     }

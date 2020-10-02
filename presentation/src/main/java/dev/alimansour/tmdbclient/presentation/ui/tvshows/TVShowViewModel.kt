@@ -24,11 +24,7 @@ class TVShowViewModel(
     fun getTVShows() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            getTVShowsUseCase.execute()?.let {
-                emit(ResultWrapper.success(it))
-            } ?: run {
-                emit(ResultWrapper.error(null, "No data available!"))
-            }
+            emit(ResultWrapper.success(getTVShowsUseCase.execute()))
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
@@ -40,11 +36,7 @@ class TVShowViewModel(
     fun updateTVShows() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            updateTVShowsUseCase.execute()?.let {
-                emit(ResultWrapper.success(it))
-            } ?: run {
-                emit(ResultWrapper.error(null, "No data available!"))
-            }
+            emit(ResultWrapper.success(updateTVShowsUseCase.execute()))
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }

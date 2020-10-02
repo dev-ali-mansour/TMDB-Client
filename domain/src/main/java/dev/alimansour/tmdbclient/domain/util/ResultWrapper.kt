@@ -7,11 +7,7 @@ package dev.alimansour.tmdbclient.domain.util
  * ----------------- PassySports IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-data class ResultWrapper<out T>(
-    val status: Status,
-    val data: T?,
-    val message: String?
-) {
+data class ResultWrapper<out T>(val status: Status, val data: T?, val message: String?) {
 
     enum class Status { SUCCESS, ERROR, LOADING }
 
