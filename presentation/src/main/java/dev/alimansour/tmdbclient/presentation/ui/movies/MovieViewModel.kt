@@ -24,7 +24,10 @@ class MovieViewModel(
     fun getMovies() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            emit(ResultWrapper.success(getMoviesUseCase.execute()))
+            emit(
+                ResultWrapper.success(
+                    getMoviesUseCase.execute()?.sortedByDescending { it.popularity })
+            )
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
@@ -36,7 +39,10 @@ class MovieViewModel(
     fun updateMovies() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            emit(ResultWrapper.success(updateMoviesUseCase.execute()))
+            emit(
+                ResultWrapper.success(
+                    updateMoviesUseCase.execute()?.sortedByDescending { it.popularity })
+            )
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }

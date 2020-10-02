@@ -24,7 +24,10 @@ class TVShowViewModel(
     fun getTVShows() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            emit(ResultWrapper.success(getTVShowsUseCase.execute()))
+            emit(
+                ResultWrapper.success(
+                    getTVShowsUseCase.execute()?.sortedByDescending { it.popularity })
+            )
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
@@ -36,7 +39,10 @@ class TVShowViewModel(
     fun updateTVShows() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            emit(ResultWrapper.success(updateTVShowsUseCase.execute()))
+            emit(
+                ResultWrapper.success(
+                    updateTVShowsUseCase.execute()?.sortedByDescending { it.popularity })
+            )
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }

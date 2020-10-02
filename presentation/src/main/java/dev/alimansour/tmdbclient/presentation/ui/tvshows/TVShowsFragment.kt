@@ -94,7 +94,7 @@ class TVShowsFragment : Fragment() {
                         ResultWrapper.Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
                             result.data?.let { list ->
-                                adapter.setDataSource(list.sortedBy { it.popularity })
+                                adapter.setDataSource(list)
                             } ?: run {
                                 Toast.makeText(
                                     requireContext(),
@@ -131,7 +131,7 @@ class TVShowsFragment : Fragment() {
                         ResultWrapper.Status.SUCCESS -> {
                             swipeRefreshLayout.stopRefreshing()
                             result.data?.let { list ->
-                                adapter.setDataSource(list.sortedBy { it.popularity })
+                                adapter.setDataSource(list)
                             }
                         }
                     }

@@ -24,7 +24,10 @@ class ArtistViewModel(
     fun getArtists() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            emit(ResultWrapper.success(getArtistsUseCase.execute()))
+            emit(
+                ResultWrapper.success(
+                    getArtistsUseCase.execute()?.sortedByDescending { it.popularity })
+            )
         }
     }
 
@@ -34,7 +37,10 @@ class ArtistViewModel(
     fun updateArtists() = liveData {
         runCatching {
             emit(ResultWrapper.loading(null))
-            emit(ResultWrapper.success(updateArtistsUseCase.execute()))
+            emit(
+                ResultWrapper.success(
+                    updateArtistsUseCase.execute()?.sortedByDescending { it.popularity })
+            )
         }.onFailure {
             it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
