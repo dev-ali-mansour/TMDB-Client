@@ -25,20 +25,26 @@ class MoviesRepositoryImpl(
     override suspend fun getMovies(): List<Movie>? = getMoviesFromCache()
 
     override suspend fun updateMovies(): List<Movie>? {
-        val newMovieList = getMoviesFromAPI()
-        movieLocalDataSource.clearAll()
-        movieLocalDataSource.saveMoviesToDB(newMovieList.map {
-            movieMapper.mapToEntity(it)
-        })
-        movieCacheDataSource.saveMoviesToCache(newMovieList)
-        return newMovieList
+        return runCatching {
+            getMoviesFromAPI()?.let { list ->
+                movieLocalDataSource.clearAll()
+                movieLocalDataSource.saveMoviesToDB(list.map {
+                    movieMapper.mapToEntity(it)
+                })
+                movieCacheDataSource.saveMoviesToCache(list)
+                list
+            }
+        }.getOrElse {
+            it.printStackTrace()
+            null
+        }
     }
 
     /**
      * Get list of popular movies from TMDB API
      * @return List of Movie objects
      */
-    private suspend fun getMoviesFromAPI(): List<Movie> {
+    private suspend fun getMoviesFromAPI(): List<Movie>? {
         lateinit var movieList: List<Movie>
         runCatching {
             val response = movieRemoteDataSource.getMovies()
@@ -64,7 +70,7 @@ class MoviesRepositoryImpl(
             if (movieList.isNotEmpty()) {
                 return movieList
             } else {
-                movieList = getMoviesFromAPI()
+                getMoviesFromAPI()?.let { movieList = it }
                 movieLocalDataSource.saveMoviesToDB(movieList.map {
                     movieMapper.mapToEntity(it)
                 })
@@ -89,7 +95,6 @@ class MoviesRepositoryImpl(
             moviesList = getMoviesFromDB()
             movieCacheDataSource.saveMoviesToCache(moviesList)
         }
-
         return moviesList
     }
 }

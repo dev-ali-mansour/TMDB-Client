@@ -1,9 +1,11 @@
 package dev.alimansour.tmdbclient.presentation.ui.movies
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import dev.alimansour.tmdbclient.domain.usecase.movie.GetMoviesUseCase
 import dev.alimansour.tmdbclient.domain.usecase.movie.UpdateMoviesUseCase
+import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -21,15 +23,25 @@ class MovieViewModel(
      * Get list of popular movies
      */
     fun getMovies() = liveData {
-        val movieList = getMoviesUseCase.execute()
-        emit(movieList)
+        emit(ResultWrapper.loading(null))
+        getMoviesUseCase.execute()?.let {
+            emit(ResultWrapper.success(it))
+        } ?: run {
+            emit(ResultWrapper.error(null, "No data available!"))
+        }
+        Log.d(MoviesFragment::class.simpleName, "")
+
     }
 
     /**
      * Update the list of popular movies
      */
     fun updateMovies() = liveData {
-        val movieList = updateMoviesUseCase.execute()
-        emit(movieList)
+        emit(ResultWrapper.loading(null))
+        updateMoviesUseCase.execute()?.let {
+            emit(ResultWrapper.success(it))
+        } ?: run {
+            emit(ResultWrapper.error(null, "No data available!"))
+        }
     }
 }
