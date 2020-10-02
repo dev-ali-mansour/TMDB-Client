@@ -1,6 +1,7 @@
 package dev.alimansour.tmdbclient.domain.usecase.artist
 
 import dev.alimansour.tmdbclient.domain.repository.ArtistsRepository
+import javax.inject.Inject
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -9,6 +10,6 @@ import dev.alimansour.tmdbclient.domain.repository.ArtistsRepository
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-class GetArtistsUseCase(private val repository: ArtistsRepository) {
+class GetArtistsUseCase @Inject constructor(private val repository: ArtistsRepository) {
     suspend fun execute() = repository.getArtists()
 }

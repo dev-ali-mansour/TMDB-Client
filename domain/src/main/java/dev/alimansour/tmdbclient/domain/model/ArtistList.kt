@@ -1,4 +1,4 @@
-package dev.alimansour.tmdbclient.domain.model.tvshow
+package dev.alimansour.tmdbclient.domain.model
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -7,10 +7,11 @@ package dev.alimansour.tmdbclient.domain.model.tvshow
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-data class TvShow(
-    val firstAirDate: String,
-    val id: Int,
-    val name: String,
-    val overview: String,
-    val posterPath: String
-)
+data class ArtistList(val artists: List<Artist>) {
+    data class Artist(
+        val id: Int,
+        val name: String,
+        val popularity: Double,
+        val profilePath: String
+    )
+}

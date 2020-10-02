@@ -1,4 +1,8 @@
-package dev.alimansour.tmdbclient.domain.model.movie
+package dev.alimansour.tmdbclient.data.model
+
+
+import com.google.gson.annotations.SerializedName
+import dev.alimansour.tmdbclient.data.db.entity.MovieEntity
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -7,4 +11,4 @@ package dev.alimansour.tmdbclient.domain.model.movie
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-data class MovieList(val movies: List<Movie>)
+data class MovieResponse(@SerializedName("results") val movies: List<MovieEntity>)

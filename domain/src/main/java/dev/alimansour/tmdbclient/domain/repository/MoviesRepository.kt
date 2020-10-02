@@ -1,6 +1,6 @@
 package dev.alimansour.tmdbclient.domain.repository
 
-import dev.alimansour.tmdbclient.domain.model.movie.Movie
+import dev.alimansour.tmdbclient.domain.model.MovieList.Movie
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour

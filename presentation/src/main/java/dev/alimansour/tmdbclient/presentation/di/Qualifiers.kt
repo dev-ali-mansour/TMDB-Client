@@ -1,4 +1,6 @@
-package dev.alimansour.tmdbclient.domain.model.artist
+package dev.alimansour.tmdbclient.presentation.di
+
+import javax.inject.Qualifier
 
 
 /**
@@ -8,9 +10,9 @@ package dev.alimansour.tmdbclient.domain.model.artist
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-data class Artist(
-    val id: Int,
-    val name: String,
-    val popularity: Double,
-    val profilePath: String
+@Qualifier
+@MustBeDocumented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+annotation class AppContext(
+    val value: String = "AppContext"
 )

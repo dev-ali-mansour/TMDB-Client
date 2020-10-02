@@ -1,6 +1,7 @@
 package dev.alimansour.tmdbclient.domain.repository
 
-import dev.alimansour.tmdbclient.domain.model.artist.Artist
+import dev.alimansour.tmdbclient.domain.model.ArtistList.Artist
+
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour

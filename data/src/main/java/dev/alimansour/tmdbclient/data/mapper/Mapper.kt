@@ -1,4 +1,4 @@
-package dev.alimansour.tmdbclient.domain.model.artist
+package dev.alimansour.tmdbclient.data.mapper
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -7,4 +7,10 @@ package dev.alimansour.tmdbclient.domain.model.artist
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-data class ArtistList(val artists: List<Artist>)
+interface Mapper<E, D> {
+
+    fun mapFromEntity(type: E): D
+
+    fun mapToEntity(type: D): E
+
+}

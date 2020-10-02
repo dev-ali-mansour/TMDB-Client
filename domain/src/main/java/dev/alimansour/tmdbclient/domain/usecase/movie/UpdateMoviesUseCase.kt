@@ -1,6 +1,7 @@
 package dev.alimansour.tmdbclient.domain.usecase.movie
 
 import dev.alimansour.tmdbclient.domain.repository.MoviesRepository
+import javax.inject.Inject
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -9,6 +10,6 @@ import dev.alimansour.tmdbclient.domain.repository.MoviesRepository
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-class UpdateMoviesUseCase(private val repository: MoviesRepository) {
+class UpdateMoviesUseCase @Inject constructor(private val repository: MoviesRepository) {
     suspend fun execute() = repository.updateMovies()
 }

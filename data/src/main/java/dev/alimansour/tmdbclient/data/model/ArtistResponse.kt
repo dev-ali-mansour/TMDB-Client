@@ -1,4 +1,7 @@
-package dev.alimansour.tmdbclient.domain.model.movie
+package dev.alimansour.tmdbclient.data.model
+
+import com.google.gson.annotations.SerializedName
+import dev.alimansour.tmdbclient.data.db.entity.ArtistEntity
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -7,10 +10,4 @@ package dev.alimansour.tmdbclient.domain.model.movie
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-data class Movie(
-    val id: Int,
-    val overview: String,
-    val posterPath: String,
-    val releaseDate: String,
-    val title: String
-)
+data class ArtistResponse(@SerializedName("results") val artists: List<ArtistEntity>)
