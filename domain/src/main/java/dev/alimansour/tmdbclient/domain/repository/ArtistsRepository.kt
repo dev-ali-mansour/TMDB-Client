@@ -1,6 +1,7 @@
 package dev.alimansour.tmdbclient.domain.repository
 
 import dev.alimansour.tmdbclient.domain.model.ArtistList.Artist
+import dev.alimansour.tmdbclient.domain.model.ImageList.Image
 
 
 /**
@@ -23,4 +24,11 @@ interface ArtistsRepository {
      * @return List of artists
      */
     suspend fun updateArtists(): List<Artist>?
+
+    /**
+     * Get list of images for popular artist
+     * @param userId User Id
+     * @return List of images
+     */
+    suspend fun getImages(userId: Int): List<Image>?
 }

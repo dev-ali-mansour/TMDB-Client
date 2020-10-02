@@ -38,14 +38,16 @@ object RepositoryModule {
         artistLocalDataSource: ArtistLocalDataSource,
         artistCacheDataSource: ArtistCacheDataSource,
         artistResponseMapper: ArtistResponseMapper,
-        artistMapper: ArtistMapper
+        artistMapper: ArtistMapper,
+        imageResponseMapper: ImageResponseMapper
     ): ArtistsRepository {
         return ArtistsRepositoryImpl(
             artistRemoteDataSource,
             artistLocalDataSource,
             artistCacheDataSource,
             artistResponseMapper,
-            artistMapper
+            artistMapper,
+            imageResponseMapper
         )
     }
 

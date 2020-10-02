@@ -3,6 +3,7 @@ package dev.alimansour.tmdbclient.presentation.ui.artists
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dev.alimansour.tmdbclient.R
@@ -59,6 +60,11 @@ class ArtistAdapter @Inject constructor() : RecyclerView.Adapter<ArtistViewHolde
                 Glide.with(binding.imageView.context)
                     .load(posterURL)
                     .into(binding.imageView)
+                binding.cardView.setOnClickListener(
+                    Navigation.createNavigateOnClickListener(
+                        ArtistsFragmentDirections.actionNavigationArtistsToImagesFragment(artist.id)
+                    )
+                )
             }.onFailure { it.printStackTrace() }
         }
     }

@@ -21,5 +21,19 @@
         android:id="@+id/navigation_artists"
         android:name="dev.alimansour.tmdbclient.presentation.ui.artists.ArtistsFragment"
         android:label="@string/title_artists"
-        tools:layout="@layout/fragment_artists" />
+        tools:layout="@layout/fragment_artists">
+        <action
+            android:id="@+id/action_navigation_artists_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imagesFragment"
+        android:name="dev.alimansour.tmdbclient.presentation.ui.artists.ImagesFragment"
+        android:label="ImagesFragment"
+        tools:layout="@layout/fragment_images">
+        <argument
+            android:name="userId"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
 </navigation>

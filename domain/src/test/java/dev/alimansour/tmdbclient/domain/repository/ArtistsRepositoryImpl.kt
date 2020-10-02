@@ -1,6 +1,7 @@
 package dev.alimansour.tmdbclient.domain.repository
 
 import dev.alimansour.tmdbclient.domain.model.ArtistList
+import dev.alimansour.tmdbclient.domain.model.ImageList
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -25,4 +26,7 @@ class ArtistsRepositoryImpl : ArtistsRepository {
         )
     }
 
+    override suspend fun getImages(userId: Int): List<ImageList.Image>? {
+        TODO("Not yet implemented")
+    }
 }

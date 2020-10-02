@@ -2,6 +2,7 @@ package dev.alimansour.tmdbclient.data.repository.artist.datasourceimpl
 
 import dev.alimansour.tmdbclient.data.api.TMDBService
 import dev.alimansour.tmdbclient.data.model.ArtistResponse
+import dev.alimansour.tmdbclient.data.model.ImageResponse
 import dev.alimansour.tmdbclient.data.repository.artist.datasource.ArtistRemoteDataSource
 import retrofit2.Response
 
@@ -15,4 +16,7 @@ import retrofit2.Response
 class ArtistRemoteDataSourceImpl(private val tmdbService: TMDBService) : ArtistRemoteDataSource {
 
     override suspend fun getArtists(): Response<ArtistResponse> = tmdbService.getPopularArtists()
+
+    override suspend fun getImages(userId: Int): Response<ImageResponse> =
+        tmdbService.getPopularArtistImages(userId)
 }

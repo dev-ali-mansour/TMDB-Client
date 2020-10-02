@@ -2,10 +2,12 @@ package dev.alimansour.tmdbclient.data.repository.artist
 
 import dev.alimansour.tmdbclient.data.mapper.ArtistMapper
 import dev.alimansour.tmdbclient.data.mapper.ArtistResponseMapper
+import dev.alimansour.tmdbclient.data.mapper.ImageResponseMapper
 import dev.alimansour.tmdbclient.data.repository.artist.datasource.ArtistCacheDataSource
 import dev.alimansour.tmdbclient.data.repository.artist.datasource.ArtistLocalDataSource
 import dev.alimansour.tmdbclient.data.repository.artist.datasource.ArtistRemoteDataSource
 import dev.alimansour.tmdbclient.domain.model.ArtistList.Artist
+import dev.alimansour.tmdbclient.domain.model.ImageList
 import dev.alimansour.tmdbclient.domain.repository.ArtistsRepository
 
 /**
@@ -20,7 +22,8 @@ class ArtistsRepositoryImpl(
     private val artistLocalDataSource: ArtistLocalDataSource,
     private val artistCacheDataSource: ArtistCacheDataSource,
     private val artistResponseMapper: ArtistResponseMapper,
-    private val artistMapper: ArtistMapper
+    private val artistMapper: ArtistMapper,
+    private val imageResponseMapper: ImageResponseMapper
 ) : ArtistsRepository {
     override suspend fun getArtists(): List<Artist>? {
         return getArtistsFromCache()
@@ -35,6 +38,8 @@ class ArtistsRepositoryImpl(
         artistCacheDataSource.saveArtistsToCache(newArtistList)
         return newArtistList
     }
+
+    override suspend fun getImages(userId: Int): List<ImageList.Image>? = getImagesFromAPI(userId)
 
     /**
      * Get list of popular artists from TMDB API
@@ -92,5 +97,18 @@ class ArtistsRepositoryImpl(
             artistCacheDataSource.saveArtistsToCache(artistList)
         }
         return artistList
+    }
+
+    private suspend fun getImagesFromAPI(userId: Int): List<ImageList.Image> {
+        lateinit var imageList: List<ImageList.Image>
+        runCatching {
+            val response = artistRemoteDataSource.getImages(userId)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    imageList = imageResponseMapper.mapFromEntity(it).images
+                }
+            }
+        }.onFailure { it.printStackTrace() }
+        return imageList
     }
 }

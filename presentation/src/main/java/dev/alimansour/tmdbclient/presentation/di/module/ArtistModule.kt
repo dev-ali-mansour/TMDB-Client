@@ -2,6 +2,7 @@ package dev.alimansour.tmdbclient.presentation.di.module
 
 import dagger.Module
 import dagger.Provides
+import dev.alimansour.tmdbclient.domain.usecase.artist.GetArtistImagesUseCase
 import dev.alimansour.tmdbclient.domain.usecase.artist.GetArtistsUseCase
 import dev.alimansour.tmdbclient.domain.usecase.artist.UpdateArtistsUseCase
 import dev.alimansour.tmdbclient.presentation.di.ArtistScope
@@ -22,11 +23,13 @@ object ArtistModule {
     @Provides
     fun provideArtistViewModelFactory(
         getArtistsUseCase: GetArtistsUseCase,
-        updateArtistsUseCase: UpdateArtistsUseCase
+        updateArtistsUseCase: UpdateArtistsUseCase,
+        getArtistImagesUseCase: GetArtistImagesUseCase
     ): ArtistViewModelFactory {
         return ArtistViewModelFactory(
             getArtistsUseCase,
-            updateArtistsUseCase
+            updateArtistsUseCase,
+            getArtistImagesUseCase
         )
     }
 }

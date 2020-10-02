@@ -1,6 +1,7 @@
 package dev.alimansour.tmdbclient.data.repository.artist.datasource
 
 import dev.alimansour.tmdbclient.data.model.ArtistResponse
+import dev.alimansour.tmdbclient.data.model.ImageResponse
 import retrofit2.Response
 
 /**
@@ -16,4 +17,11 @@ interface ArtistRemoteDataSource {
      * @return Response object of ArtistResponse
      */
     suspend fun getArtists(): Response<ArtistResponse>
+
+    /**
+     * Get list of images for popular artist from API
+     * @param userId User Id
+     * @return Response object of ImageResponse
+     */
+    suspend fun getImages(userId: Int): Response<ImageResponse>
 }

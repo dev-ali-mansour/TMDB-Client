@@ -4,6 +4,7 @@ import dagger.Subcomponent
 import dev.alimansour.tmdbclient.presentation.di.ArtistScope
 import dev.alimansour.tmdbclient.presentation.di.module.ArtistModule
 import dev.alimansour.tmdbclient.presentation.ui.artists.ArtistsFragment
+import dev.alimansour.tmdbclient.presentation.ui.artists.ImagesFragment
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -22,4 +23,5 @@ interface ArtistSubComponent {
     }
 
     fun inject(artistsFragment: ArtistsFragment)
+    fun inject(imagesFragment: ImagesFragment)
 }
