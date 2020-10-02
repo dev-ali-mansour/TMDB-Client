@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import dev.alimansour.tmdbclient.domain.usecase.artist.GetArtistsUseCase
 import dev.alimansour.tmdbclient.domain.usecase.artist.UpdateArtistsUseCase
+import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -21,15 +22,31 @@ class ArtistViewModel(
      * Get list of popular artists
      */
     fun getArtists() = liveData {
-        val artistList = getArtistsUseCase.execute()
-        emit(artistList)
+        runCatching {
+            emit(ResultWrapper.loading(null))
+            getArtistsUseCase.execute()?.let {
+                emit(ResultWrapper.success(it))
+            } ?: run {
+                emit(ResultWrapper.error(null, "No data available!"))
+            }
+        }.onFailure {
+            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
+        }
     }
 
     /**
      * Update the list of popular artists
      */
     fun updateArtists() = liveData {
-        val artistList = updateArtistsUseCase.execute()
-        emit(artistList)
+        runCatching {
+            emit(ResultWrapper.loading(null))
+            updateArtistsUseCase.execute()?.let {
+                emit(ResultWrapper.success(it))
+            } ?: run {
+                emit(ResultWrapper.error(null, "No data available!"))
+            }
+        }.onFailure {
+            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
+        }
     }
 }

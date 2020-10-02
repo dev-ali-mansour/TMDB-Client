@@ -2,14 +2,19 @@ package dev.alimansour.tmdbclient.presentation.ui.artists
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import dev.alimansour.tmdbclient.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import dev.alimansour.tmdbclient.databinding.FragmentArtistsBinding
+import dev.alimansour.tmdbclient.domain.util.ResultWrapper
 import dev.alimansour.tmdbclient.presentation.ui.Injector
+import dev.alimansour.tmdbclient.presentation.ui.movies.MoviesFragment
+import dev.alimansour.tmdbclient.presentation.utils.stopRefreshing
 import javax.inject.Inject
 
 /**
@@ -20,10 +25,14 @@ import javax.inject.Inject
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
 class ArtistsFragment : Fragment() {
+    private lateinit var binding: FragmentArtistsBinding
+    private lateinit var artistViewModel: ArtistViewModel
 
     @Inject
     lateinit var factory: ArtistViewModelFactory
-    private lateinit var artistViewModel: ArtistViewModel
+
+    @Inject
+    lateinit var adapter: ArtistAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -39,16 +48,101 @@ class ArtistsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        artistViewModel = ViewModelProvider(this, factory).get(ArtistViewModel::class.java)
+        runCatching {
+            binding = FragmentArtistsBinding.inflate(layoutInflater, container, false)
+            artistViewModel = ViewModelProvider(this, factory).get(ArtistViewModel::class.java)
 
-        val root = inflater.inflate(R.layout.fragment_artists, container, false)
-        val textView: TextView = root.findViewById(R.id.text_notifications)
-
-        artistViewModel.getArtists().observe(viewLifecycleOwner, {
-            it?.map { artist ->
-                textView.append("\nArtist: ${artist.name}")
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                binding.swipeRefreshLayout.stopRefreshing()
+                updateArtists()
             }
-        })
-        return root
+            initRecyclerView()
+
+            artistViewModel.getArtists().observe(viewLifecycleOwner, {
+            })
+        }.onFailure { it.printStackTrace() }
+        return binding.root
+    }
+
+    /**
+     * Initialize movies RecyclerView
+     */
+    private fun initRecyclerView() {
+        runCatching {
+            binding.apply {
+                adapter.setDataSource(listOf())
+                recyclerView.setHasFixedSize(true)
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                artistAdapter = adapter
+                displayPopularArtists()
+            }
+        }.onFailure { it.printStackTrace() }
+    }
+
+    /**
+     * Display popular artists
+     */
+    private fun displayPopularArtists() {
+        runCatching {
+            binding.apply {
+                artistViewModel.getArtists().observe(viewLifecycleOwner, { result ->
+                    when (result.status) {
+                        ResultWrapper.Status.LOADING -> {
+                            swipeRefreshLayout.post {
+                                swipeRefreshLayout.isRefreshing = true
+                            }
+                        }
+                        ResultWrapper.Status.ERROR -> {
+                            swipeRefreshLayout.stopRefreshing()
+                            Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG)
+                                .show()
+                        }
+                        ResultWrapper.Status.SUCCESS -> {
+                            swipeRefreshLayout.stopRefreshing()
+                            result.data?.let { posts ->
+                                adapter.setDataSource(posts)
+                            }
+                        }
+                    }
+                })
+            }
+        }.onFailure {
+            binding.swipeRefreshLayout.stopRefreshing()
+            it.printStackTrace()
+        }
+    }
+
+    /**
+     * Update popular artists list
+     */
+    private fun updateArtists() {
+        runCatching {
+            binding.apply {
+                artistViewModel.updateArtists().observe(viewLifecycleOwner, { result ->
+                    Log.d(MoviesFragment::class.simpleName, "Update movies!")
+                    when (result.status) {
+                        ResultWrapper.Status.LOADING -> {
+                            swipeRefreshLayout.post {
+                                swipeRefreshLayout.isRefreshing = true
+                            }
+                        }
+                        ResultWrapper.Status.ERROR -> {
+                            swipeRefreshLayout.stopRefreshing()
+                            Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG)
+                                .show()
+                        }
+                        ResultWrapper.Status.SUCCESS -> {
+                            swipeRefreshLayout.stopRefreshing()
+                            result.data?.let { posts ->
+                                adapter.setDataSource(posts)
+                            }
+                        }
+                    }
+                })
+            }
+        }.onFailure {
+            binding.swipeRefreshLayout.stopRefreshing()
+            it.printStackTrace()
+        }
     }
 }

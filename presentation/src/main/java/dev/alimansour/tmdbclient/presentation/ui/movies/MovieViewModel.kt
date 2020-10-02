@@ -1,6 +1,5 @@
 package dev.alimansour.tmdbclient.presentation.ui.movies
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import dev.alimansour.tmdbclient.domain.usecase.movie.GetMoviesUseCase
@@ -23,25 +22,31 @@ class MovieViewModel(
      * Get list of popular movies
      */
     fun getMovies() = liveData {
-        emit(ResultWrapper.loading(null))
-        getMoviesUseCase.execute()?.let {
-            emit(ResultWrapper.success(it))
-        } ?: run {
-            emit(ResultWrapper.error(null, "No data available!"))
+        runCatching {
+            emit(ResultWrapper.loading(null))
+            getMoviesUseCase.execute()?.let {
+                emit(ResultWrapper.success(it))
+            } ?: run {
+                emit(ResultWrapper.error(null, "No data available!"))
+            }
+        }.onFailure {
+            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
-        Log.d(MoviesFragment::class.simpleName, "")
-
     }
 
     /**
      * Update the list of popular movies
      */
     fun updateMovies() = liveData {
-        emit(ResultWrapper.loading(null))
-        updateMoviesUseCase.execute()?.let {
-            emit(ResultWrapper.success(it))
-        } ?: run {
-            emit(ResultWrapper.error(null, "No data available!"))
+        runCatching {
+            emit(ResultWrapper.loading(null))
+            updateMoviesUseCase.execute()?.let {
+                emit(ResultWrapper.success(it))
+            } ?: run {
+                emit(ResultWrapper.error(null, "No data available!"))
+            }
+        }.onFailure {
+            it.message?.let { message -> emit(ResultWrapper.error(null, message)) }
         }
     }
 }

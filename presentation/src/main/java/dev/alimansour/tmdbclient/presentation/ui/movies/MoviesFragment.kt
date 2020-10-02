@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dev.alimansour.tmdbclient.databinding.FragmentMoviesBinding
 import dev.alimansour.tmdbclient.domain.util.ResultWrapper.Status
 import dev.alimansour.tmdbclient.presentation.ui.Injector
@@ -27,7 +26,6 @@ import javax.inject.Inject
 class MoviesFragment : Fragment() {
     private lateinit var binding: FragmentMoviesBinding
     private lateinit var movieViewModel: MovieViewModel
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     @Inject
     lateinit var factory: MovieViewModelFactory
@@ -52,9 +50,11 @@ class MoviesFragment : Fragment() {
         runCatching {
             binding = FragmentMoviesBinding.inflate(layoutInflater, container, false)
             movieViewModel = ViewModelProvider(this, factory).get(MovieViewModel::class.java)
-            swipeRefreshLayout = binding.swipeRefreshLayout
 
-            swipeRefreshLayout.setOnRefreshListener { updateMovies() }
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                binding.swipeRefreshLayout.stopRefreshing()
+                updateMovies()
+            }
             initRecyclerView()
         }.onFailure { it.printStackTrace() }
         return binding.root
@@ -80,27 +80,32 @@ class MoviesFragment : Fragment() {
      */
     private fun displayPopularMovies() {
         runCatching {
-            movieViewModel.getMovies().observe(viewLifecycleOwner, { result ->
-                when (result.status) {
-                    Status.LOADING -> {
-                        swipeRefreshLayout.post {
-                            swipeRefreshLayout.isRefreshing = true
+            binding.apply {
+                movieViewModel.getMovies().observe(viewLifecycleOwner, { result ->
+                    when (result.status) {
+                        Status.LOADING -> {
+                            swipeRefreshLayout.post {
+                                swipeRefreshLayout.isRefreshing = true
+                            }
+                        }
+                        Status.ERROR -> {
+                            swipeRefreshLayout.stopRefreshing()
+                            Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG)
+                                .show()
+                        }
+                        Status.SUCCESS -> {
+                            swipeRefreshLayout.stopRefreshing()
+                            result.data?.let { posts ->
+                                adapter.setDataSource(posts)
+                            }
                         }
                     }
-                    Status.ERROR -> {
-                        swipeRefreshLayout.stopRefreshing()
-                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_LONG)
-                            .show()
-                    }
-                    Status.SUCCESS -> {
-                        swipeRefreshLayout.stopRefreshing()
-                        result.data?.let { posts ->
-                            adapter.setDataSource(posts)
-                        }
-                    }
-                }
-            })
-        }.onFailure { it.printStackTrace() }
+                })
+            }
+        }.onFailure {
+            binding.swipeRefreshLayout.stopRefreshing()
+            it.printStackTrace()
+        }
     }
 
     /**
@@ -131,6 +136,9 @@ class MoviesFragment : Fragment() {
                     }
                 })
             }
-        }.onFailure { it.printStackTrace() }
+        }.onFailure {
+            binding.swipeRefreshLayout.stopRefreshing()
+            it.printStackTrace()
+        }
     }
 }
