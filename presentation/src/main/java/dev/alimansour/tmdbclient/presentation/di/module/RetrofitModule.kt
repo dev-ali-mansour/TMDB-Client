@@ -75,7 +75,7 @@ object RetrofitModule {
     @Singleton
     @Provides
     fun providesRetrofitClient(okHttpClient: OkHttpClient): Retrofit {
-        val baseUrl = "https://passy-sports.azurewebsites.net/"
+        val baseUrl = BuildConfig.BASE_URL
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)

@@ -1,5 +1,6 @@
 package dev.alimansour.tmdbclient.presentation.ui.tvshows
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dev.alimansour.tmdbclient.R
+import dev.alimansour.tmdbclient.presentation.ui.Injector
+import javax.inject.Inject
 
 /**
  * TMDB Client Android Application developed by: Ali Mansour
@@ -18,18 +21,35 @@ import dev.alimansour.tmdbclient.R
  */
 class TVShowsFragment : Fragment() {
 
-    private lateinit var tvShowsViewModel: TVShowsViewModel
+    @Inject
+    lateinit var factory: TVShowViewModelFactory
+    private lateinit var tvShowViewModel: TVShowViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        runCatching {
+            // Inject fragment to MainComponent
+            (requireActivity().application as Injector).createTvShowSubComponent()
+                .inject(this)
+        }.onFailure { it.printStackTrace() }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        tvShowsViewModel =
-            ViewModelProvider(this).get(TVShowsViewModel::class.java)
+        tvShowViewModel = ViewModelProvider(this, factory).get(TVShowViewModel::class.java)
+
         val root = inflater.inflate(R.layout.fragment_tv_shows, container, false)
         val textView: TextView = root.findViewById(R.id.text_dashboard)
-        tvShowsViewModel.text.observe(viewLifecycleOwner, { textView.text = it })
+
+        tvShowViewModel.getTVShows().observe(viewLifecycleOwner, {
+            it?.map { tvShow ->
+                textView.append("\nTV Show: ${tvShow.name}")
+            }
+        })
+
         return root
     }
 }

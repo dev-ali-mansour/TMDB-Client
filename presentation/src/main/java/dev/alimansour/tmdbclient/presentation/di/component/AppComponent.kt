@@ -3,10 +3,7 @@ package dev.alimansour.tmdbclient.presentation.di.component
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import dev.alimansour.tmdbclient.presentation.di.AppContext
-import dev.alimansour.tmdbclient.presentation.di.module.AppModule
-import dev.alimansour.tmdbclient.presentation.di.module.RetrofitModule
-import dev.alimansour.tmdbclient.presentation.di.module.RoomModule
+import dev.alimansour.tmdbclient.presentation.di.module.*
 import javax.inject.Singleton
 
 /**
@@ -17,14 +14,28 @@ import javax.inject.Singleton
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
 @Singleton
-@Component(modules = [AppModule::class, RetrofitModule::class, RoomModule::class])
+@Component(
+    modules = [
+        AppModule::class,
+        RetrofitModule::class,
+        RoomModule::class,
+        RepositoryModule::class,
+        RemoteDataModule::class,
+        LocalDataModule::class,
+        CacheDataModule::class
+    ]
+)
 interface AppComponent {
 
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun context(@AppContext context: Context): Builder
+        fun context(context: Context): Builder
 
         fun build(): AppComponent
     }
+
+    fun movieSubComponent(): MovieSubComponent.Builder
+    fun tvShowSubComponent(): TVShowSubComponent.Builder
+    fun artistSubComponent(): ArtistSubComponent.Builder
 }

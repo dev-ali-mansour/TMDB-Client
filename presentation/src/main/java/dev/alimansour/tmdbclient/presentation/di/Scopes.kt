@@ -11,8 +11,12 @@ import javax.inject.Scope
  */
 @Scope
 @Retention(AnnotationRetention.BINARY)
-annotation class AuthScope
+annotation class ArtistScope
 
 @Scope
 @Retention(AnnotationRetention.BINARY)
-annotation class MainScope
+annotation class MovieScope
+
+@Scope
+@Retention(AnnotationRetention.BINARY)
+annotation class TVShowScope

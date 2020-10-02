@@ -8,7 +8,6 @@ import dev.alimansour.tmdbclient.data.db.AppDatabase
 import dev.alimansour.tmdbclient.data.db.dao.ArtistDao
 import dev.alimansour.tmdbclient.data.db.dao.MovieDao
 import dev.alimansour.tmdbclient.data.db.dao.TVShowDao
-import dev.alimansour.tmdbclient.presentation.di.AppContext
 import javax.inject.Singleton
 
 /**
@@ -24,7 +23,7 @@ object RoomModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideAppDatabase(@AppContext context: Context): AppDatabase {
+    fun provideAppDatabase(context: Context): AppDatabase {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,

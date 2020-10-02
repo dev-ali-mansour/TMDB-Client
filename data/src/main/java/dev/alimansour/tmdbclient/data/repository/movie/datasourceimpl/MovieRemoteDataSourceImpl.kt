@@ -1,8 +1,8 @@
 package dev.alimansour.tmdbclient.data.repository.movie.datasourceimpl
 
 import dev.alimansour.tmdbclient.data.api.TMDBService
-import dev.alimansour.tmdbclient.data.model.ArtistResponse
-import dev.alimansour.tmdbclient.data.repository.artist.datasource.ArtistRemoteDataSource
+import dev.alimansour.tmdbclient.data.model.MovieResponse
+import dev.alimansour.tmdbclient.data.repository.movie.datasource.MovieRemoteDataSource
 import retrofit2.Response
 
 /**
@@ -12,6 +12,6 @@ import retrofit2.Response
  * ----------------- TMDB Client IS FREE SOFTWARE ------------------
  * https://www.alimansour.dev   |   dev.ali.mansour@gmail.com
  */
-class MovieRemoteDataSourceImpl(private val tmdbService: TMDBService) : ArtistRemoteDataSource {
-    override suspend fun getArtists(): Response<ArtistResponse> = tmdbService.getPopularArtists()
+class MovieRemoteDataSourceImpl(private val tmdbService: TMDBService) : MovieRemoteDataSource {
+    override suspend fun getMovies(): Response<MovieResponse> = tmdbService.getPopularMovies()
 }
